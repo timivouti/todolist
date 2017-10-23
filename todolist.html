@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+#content {
+  width:50%;
+  background:#70b8d0;
+  height:500px;
+  margin-left:auto;
+  margin-right:auto;
+  margin-top:200px;
+  border-radius:5%;
+}
+.bodytext {
+  color:#ffffff;
+  font-size:2em;
+  text-align:center;
+  line-height: 80px;
+}
+#header {
+  height:80px;
+  width:100%;
+  border-bottom:1px solid white;
+}
+#dateselection {
+  height:100px;
+  width:100%;
+  margin-left:15%;
+}
+.date {
+  width:20%;
+  background-color: #70b8d0;
+  color:white;
+  height:50px;
+  border-radius:5%;
+  border-color:white;
+  margin-top:15px;
+}
+.select {
+  background-color: #70b8d0;
+  color:white;
+  height:50px;
+  border-color:white;
+  border-radius:5%;
+  border-width:thin;
+  cursor:pointer;
+}
+.selectsave {
+  background-color: #70b8d0;
+  color:white;
+  height:50px;
+  border-color:white;
+  border-radius:5%;
+  border-width:thin;
+  cursor:pointer;
+  margin-left:45%;
+  margin-right:auto;
+}
+#contentlist {
+  display:flex;
+}
+#list {
+  width:80%;
+  height:1%;
+  flex:1;
+}
+#remove {
+  width:20%;
+  height:1%;
+  flext:1;
+}
+#todolist {
+   list-style-type:none;
+   color:white;
+   font-size:1.5em;
+   line-height:50px;
+   text-align:center;
+}
+#addlist {
+  border-top:1px solid white;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom:10px;
+}
+.inputlist {
+  background-color:#70b8d0;
+  color:white;
+  border-color:white;
+  border-radius:2%;
+  border-width:1px;
+  margin-left:16%;
+  width:60%;
+  font-size:1.5em;
+  line-height:46px;
+  vertical-align:bottom;
+  margin-top:10px;
+}
+.x {
+  float:right;
+  margin-right:10px;
+  border-radius:10%;
+  background-color:red;
+  color:white;
+  width:100px;
+  height:30px;
+  margin-top:20px;
+}
+#x0 {
+  margin-top:15px;
+}
+</style>
+<script>
+
+
+</script>
+</head>
+<body>
+  <div id="content">
+    <div id="header">
+    <p class="bodytext">TO DO LIST</p>
+  </div>
+  <br>
+  <div id="dateselection">
+    <select class="date" id="year" onchange="findDays()">
+    </select>
+    <select class="date" id="month" onchange="findDays()">
+    </select>
+    <select class="date" id="day">
+    </select>
+    <button class="select" onclick="selectDate()">SELECT</button>
+  </div>
+  <div id="addlist">
+    <input class="inputlist" id="inputlist"></input>
+    <button class="select" onclick="addToList()">ADD</button>
+  </div>
+  <div id="contentlist">
+  <div id="list">
+  </div>
+  <div id="remove">
+  </div>
+  </div>
+  <button onclick="save()" class="selectsave">SAVE</button>
+  </div>
+<script>
+var yearSelect = document.getElementById('year');
+var monthSelect = document.getElementById('month');
+var daySelect = document.getElementById('day');
+var inputlist = document.getElementById('inputlist');
+var todolist = document.getElementById('todolist');
+var list = document.getElementById('list');
+var deleteimg = "https://i.imgur.com/IEne0uj.png";
+var years = [2016, 2017, 2018, 2019, 2020, 2021];
+var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var daysLeap = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+var todos = [];
+var whatTaskAreDone = [];
+var date = new Date();
+var listLength = 0;
+var result = 0;
+
+for(var i = 0; i < years.length; i++) {
+  var option = document.createElement('option');
+  option.text = years[i];
+  option.value = years[i];
+  yearSelect.add(option);
+}
+for(var i = 0; i < months.length; i++) {
+  var option = document.createElement('option');
+  option.text = months[i];
+  option.value = i;
+  monthSelect.add(option);
+}
+
+function findDays() {
+  for (var i = 0; i < 31; i++) {
+    daySelect.remove(0);
+  }
+  if ((yearSelect.value % 4 == 0) && (yearSelect.value % 100 != 0) || (yearSelect.value % 400 == 0)) {
+    for (var i = 0; i < daysLeap[monthSelect.value]; i++) {
+      var option = document.createElement('option');
+      option.text = i+1;
+      option.value = i+1;
+      daySelect.add(option);
+      }
+    }
+    else {
+      for (var i = 0; i < days[monthSelect.value]; i++) {
+        var option = document.createElement('option');
+        option.text = i+1;
+        option.value = i+1;
+        daySelect.add(option);
+      }
+    }
+  }
+var findYear;
+for (var i = 0; i < years.length; i++) {
+  if (date.getFullYear() == years[i]) {
+    findYear = i;
+  }
+}
+
+function addToList() {
+  if (inputlist.value != 0) {
+    inputlist.style.backgroundColor = "#70b8d0";
+    todos.push(inputlist.value);
+    whatTaskAreDone.push(false);
+    listLength++;
+    printList();
+  }
+  else {
+    inputlist.style.backgroundColor = "red";
+  }
+}
+
+function printList() {
+  var templist = "";
+  var templist2 = "<br>";
+  list.innerHTML = "";
+  templist += '<ul class="todolist" id="todolist">';
+  for (var i = 0; i < todos.length; i++) {
+    templist += '<li id="' + i + '" onclick="taskDone(this.id)" >' + todos[i] + '</li>';
+    templist2 += '<span class="x" id="' + i + '" onclick="removeTask(this.id)" ><img src="' + deleteimg + '"></span>'
+  }
+  templist += '</ul>';
+  list.innerHTML = templist;
+  remove.innerHTML = templist2;
+  if (listLength > 2) {
+    var result = (((listLength - 2) * 50) + 500);
+    document.getElementById('content').style.height = result + "px";
+  }
+}
+
+function taskDone(y) {
+  if (whatTaskAreDone[y] == false) {
+    document.getElementById(y).style.textDecoration = "line-through";
+    whatTaskAreDone[y] = true;
+  }
+  else {
+    document.getElementById(y).style.textDecoration = "none";
+    whatTaskAreDone[y] = false;
+  }
+}
+
+function removeTask(x) {
+  var temp = [];
+  listLength--;
+  for (var i = 0; i < todos.length; i++) {
+    if (x != i) {
+      temp.push(todos[i]);
+    }
+  }
+  todos = [];
+  for (var i = 0; i < temp.length; i++) {
+    todos.push(temp[i]);
+  }
+  printList();
+}
+
+function selectDate() {
+  alert(document.cookie);
+}
+
+function save() {
+  var dayinCookie = yearSelect.value + monthSelect.value + daySelect.value;
+  document.cookie = '"' + dayinCookie + "=" + todos + ';max-age=315360000"';
+}
+
+yearSelect[findYear].selected = true;
+monthSelect[date.getMonth()].selected = true;
+findDays();
+daySelect[date.getDate()-1].selected = true;
+
+</script>
+</body>
+</html>
