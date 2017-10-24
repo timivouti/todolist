@@ -161,6 +161,7 @@ var whatTaskAreDone = [];
 var date = new Date();
 var listLength = 0;
 var result = 0;
+var dataList = [];
 
 for(var i = 0; i < years.length; i++) {
   var option = document.createElement('option');
@@ -232,6 +233,11 @@ function printList() {
     var result = (((listLength - 2) * 50) + 500);
     document.getElementById('content').style.height = result + "px";
   }
+  for (var i = 0; i < todos.length; i++) {
+    if (whatTaskAreDone[i] == true) {
+      document.getElementById(i).style.textDecoration = "line-through";
+    }
+  }
 }
 
 function taskDone(y) {
@@ -261,12 +267,52 @@ function removeTask(x) {
 }
 
 function selectDate() {
-  alert(document.cookie);
+  var isFound = false;
+  listLength = 0;
+  var dayinTotal = yearSelect.value + monthSelect.value + daySelect.value;
+  for (var i = 0; i < dataList.length; i++) {
+    if (dataList[i] != undefined) {
+    if (dataList[i][0] == dayinTotal) {
+      todos = [];
+      whatTaskAreDone = [];
+      isFound = true;
+      for (var y = 0; y < dataList[i][1].length; y++) {
+        todos.push(dataList[i][1][y]);
+        whatTaskAreDone.push(dataList[i][2][y]);
+        listLength++;
+      }
+    }
+  }
+  }
+  if (isFound == false) {
+    todos = [];
+  }
+  printList();
 }
 
 function save() {
-  var dayinCookie = yearSelect.value + monthSelect.value + daySelect.value;
-  document.cookie = '"' + dayinCookie + "=" + todos + ';max-age=315360000"';
+  var dayinTotal = yearSelect.value + monthSelect.value + daySelect.value;
+  var temptoPush = [];
+  var isItAlready = false;
+  for (var i = 0; i < dataList.length; i++) {
+    if (dataList[i] != undefined) {
+      if (dataList[i][0] == dayinTotal) {
+      dataList[i] = undefined;
+      temptoPush.push(dayinTotal);
+      temptoPush.push(todos);
+      temptoPush.push(whatTaskAreDone);
+      dataList.push(temptoPush);
+      isItAlready = true;
+      break;
+    }
+  }
+  }
+  if (isItAlready == false) {
+    temptoPush.push(dayinTotal);
+    temptoPush.push(todos);
+    temptoPush.push(whatTaskAreDone);
+    dataList.push(temptoPush);
+  }
 }
 
 yearSelect[findYear].selected = true;
